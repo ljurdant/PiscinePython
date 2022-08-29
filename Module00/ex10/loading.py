@@ -3,6 +3,8 @@ from time import time
 import math
 import sys
 import curses
+import os
+
 def proper_round(n: float):
     if (n - round(n)) >= 0.5:
         n = math.ceil(n)
@@ -24,21 +26,25 @@ def ft_progress(lst):
         elapsed_time = current - start
         elapsed_time = "{:.2f}".format(elapsed_time)
         if i >= 1:
-            ETA = (second - start) * (len(lst) - i)
+            ETA = (second - start) * (len(lst) - i - 1)
             ETA = "{:.2f}".format(ETA)
         else:
             ETA = 0
-        message = "ETA "+str(ETA)+"s ["+(3-len(str(percent)))*" "+str(percent)+"%]["+loading*"="+">"+(loading_constant - loading)*" "+"]"+str(i)+"/"+str(len(lst))+" | elapsed time "+str(elapsed_time)+"s"
+        message = "ETA "+str(ETA)+"s ["+(3-len(str(percent)))*" "+str(percent)+"%]["+loading*"="+">"+(loading_constant - loading)*" "+"]"+str(i + 1)+"/"+str(len(lst))+" | elapsed time "+str(elapsed_time)+"s"
+        if i > 1:
+            moveup = "\033[A"
+            print(moveup * int(len(message) / width + 1))
         if len(previous_message) > len(message):
             message+=(len(previous_message) - len(message)) * " "
         previous_message = message
-        print(message)
+        width = os.get_terminal_size()[0]
+        print(message, end="\r")
         yield lst[i]
 
 listy = range(1000)
 ret = 0
 for elem in ft_progress(listy):
     ret += (elem + 3) % 5
-    sleep(1)
+    sleep(0.01)
 print()
 print(ret)
