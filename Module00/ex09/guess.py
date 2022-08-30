@@ -1,19 +1,31 @@
 import random
+def isnumber(number):
+	if len(number) == 0:
+		return False
+	elif (number[0] == '-' and number[1:].isnumeric()) or number.isnumeric():
+		return True
+	else:
+		return False
 
 def guess(n: int):
 	print("What's your guess between 1 and 99?")
 	guess = input()
 	if guess == "exit":
 		return ("exit")
-	elif not guess.isnumeric():
+	elif not isnumber(guess):
 		print("That's not a number.")
 		return("continue")
 	elif int(guess) == n:
-		return ("success") 
+		return ("success")
 	elif int(guess) > n:
 		print("Too high!")
+		if int(guess) > 99:
+			print("Reminder: the number is between 1 and 99 included")
 	elif int(guess) < n:
 		print("Too low!")
+		if int(guess) < 1:
+			print("Reminder: the number is between 1 and 99 included")
+	
 	return("continue")
 
 random.seed()

@@ -28,3 +28,5 @@ if len(sys.argv) > 2:
 	print("AssertionError: more than one argument are provided")
 elif len(sys.argv) == 2:
 	text_analyzer(sys.argv[1])
+elif len(sys.argv) == 1:
+	text_analyzer()

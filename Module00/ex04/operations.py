@@ -1,5 +1,14 @@
 import sys
 
+def isnumber(number):
+	if len(number) == 0:
+		return False
+	elif (number[0] == '-' and number[1:].isnumeric()) or number.isnumeric():
+		return True
+	else:
+		return False
+
+
 if len(sys.argv) > 3:
 	print("AssertionError: too many arguments")
 elif len(sys.argv) != 3:
@@ -7,7 +16,8 @@ elif len(sys.argv) != 3:
 else:
 	A = sys.argv[1]
 	B = sys.argv[2]
-	if not A.isnumeric() or not B.isnumeric():
+	print(isnumber(B))
+	if not isnumber(A) or not isnumber(B):
 		print("AssertionError: only integers")
 	else:
 		A = int(A)

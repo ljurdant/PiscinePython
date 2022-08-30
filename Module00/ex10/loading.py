@@ -21,7 +21,7 @@ def ft_progress(lst):
         if i == 1:
             second = time()
         current = time()
-        percent = proper_round((i/len(lst) * 100))
+        percent = proper_round(((i + 1)/len(lst) * 100))
         loading = proper_round(loading_constant * percent / 100)
         elapsed_time = current - start
         elapsed_time = "{:.2f}".format(elapsed_time)
