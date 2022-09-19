@@ -4,7 +4,7 @@ class Book:
     def __init__(self, name):
         self.name = name
         self.last_update = datetime.datetime.now()
-        self.creation_date = datetime.datetime.now()
+        self.creation_date = self.last_update
         self.recipes_list = {
             "starter" : [],
             "lunch" : [],
@@ -25,13 +25,18 @@ class Book:
         for recipe_type in self.recipes_list.values():
             for recipe in recipe_type:
                 if recipe.name == name:
-                    print(str(recipe))
+                    print(str(recipe)+"\n")
                     return (recipe)
-        print("Error: there is no recipe by the name of",name)
+        raise AttributeError("There is no recipe by the name of",name)
     
     def get_recipes_by_types(self, recipe_type):
         """Get all recipe names for a given recipe_type """
-        print(", ".join([recipe.name for recipe in self.recipes_list[recipe_type]]))
+        if recipe_type not in self.recipes_list:
+            raise AttributeError("recipe type")
+        if not len(self.recipes_list[recipe_type]):
+            print("There areno recipes of type:",recipe_type)
+        else:
+            print(", ".join([recipe.name for recipe in self.recipes_list[recipe_type]]))
 
         
     def add_recipe(self, recipe):

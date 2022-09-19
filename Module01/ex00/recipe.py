@@ -1,6 +1,6 @@
 
 class Recipe:
-    def __init__(self, name:str, cooking_lvl: int, cooking_time:int, ingredients:list[str], recipe_type:str, description:str = ""):
+    def __init__(self, name:str, cooking_lvl: int, cooking_time:int, ingredients:list,  description:str = "", recipe_type:str = ""):
         self.name = name
         self.cooking_lvl = cooking_lvl
         self.cooking_time = cooking_time
@@ -48,6 +48,8 @@ class Recipe:
     def ingredients(self, value):
         if type(value) !=  list:
             raise ValueError("Ingredients must be a list")
+        if not len(value):
+            raise ValueError("Ingredients cannot be empty")
         self._ingredients = value
     
     @property
