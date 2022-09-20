@@ -1,3 +1,8 @@
+
+def ft_map_generator(function_to_apply, iterable):
+    for i in iterable:
+        yield function_to_apply(i)
+    
 def ft_map(function_to_apply, iterable):
     """Map the function to all elements of the iterable.
     Args:
@@ -7,21 +12,18 @@ def ft_map(function_to_apply, iterable):
         An iterable.
         None if the iterable can not be used by the function.
     """
+    iter(iterable)
+    try:
+        function_to_apply(iterable[0])
+    except:
+        return None
+    return ft_map_generator(function_to_apply, iterable)
 
-    for i in iterable:
-        yield function_to_apply(i)
+# x = [1, 2, 3, 4, 5]
 
-x = [1, 2, 3, 4, 5]
+# mp = ft_map(lambda dum: dum + 1, x)
+# # mp_noniter = ft_map(lambda dum: dum + 1, 5)
+# mp_badfunction = ft_map(lambda dum: dum / 4, "hello")
 
-mp = ft_map(lambda dum: dum + 1, x)
-mp_err = ft_map(lambda dum: dum + 1, 3)
-
-# mp_error = ft_map(lambda dum, o: dum + o, 3)
-
-# mp_real = map(lambda dum, o: dum + o , x)
-
-print(mp)
-print(list(mp))
-print(list(mp_err))
-# print(mp_error)
-# print(list(mp_error))
+# print(mp)
+# print(mp_badfunction)
