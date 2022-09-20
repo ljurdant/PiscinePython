@@ -2,8 +2,10 @@ import re
 
 
 def shapeCheck(v1, v2):
+    if not isinstance(v1, Vector) or not isinstance(v2, Vector):
+        raise TypeError("Cannot convert to Vector")
     if v1.shape != v2.shape:
-        raise ValueError("Vectors are not of the same shape")
+        raise AssertionError("Vectors are not of the same shape")
 
 def iterate_single(vector, function):
     lst = []
@@ -28,18 +30,26 @@ def iterate_double(vector, other, function):
     return (lst)
 
 class Vector:
-    def __init__(self, values, end = None):
-        if type(values) == int:
-            start = 0
-            if end == None:
-                end = values
-            else:
-                start = values
-            self.values = []
-            for i in range(start, end):
+    def __init__(self, values):
+        
+        self.values = []
+        if isinstance(values, int):
+            if values < 0:
+                raise ValueError("Cannot initialise with negative size")
+            for i in range(0, values):
                 self.values.append([float(i)])
-        else:
+        elif isinstance(values, tuple):
+            if values[0] >= values[1]:
+                raise ValueError("First value must be inferior to last")
+            if len(values) == 2:
+                for i in range(values[0], values[1]):
+                    self.values.append([float(i)])
+            else:
+                raise TypeError("Cannot initialise vector with that type")
+        elif isinstance(values, list) and isinstance(values[0], list):
             self.values = values
+        else:
+            raise TypeError("Cannot initialise vector with that type")
         self.shape = (len(self.values), len(self.values[0]))
     
     def dot(self, other):
@@ -81,7 +91,7 @@ class Vector:
     
     def __truediv__(self, scalar):
         if type(scalar) != float and type(scalar) != int:
-            raise ValueError("Vector can only be divided by a scalar")
+            raise TypeError("Vector can only be divided by a scalar")
         if (scalar == 0):
             raise ZeroDivisionError("Can't divide by zero")
         return(Vector(iterate_single(self, lambda x: x / scalar)))
@@ -91,10 +101,11 @@ class Vector:
     
     def __mul__(self, scalar):
         if type(scalar) != float and type(scalar) != int:
-            raise ValueError("Vector can only be divided by a scalar")
+            raise TypeError("Vector can only be divided by a scalar")
         return (Vector(iterate_single(self, lambda x : x * scalar)))
     def __rmul__(self, scalar):
         if type(scalar) != float and type(scalar) != int:
-            raise ValueError("Vector can only be divided by a scalar")
+            raise TypeError("Vector can only be divided by a scalar")
         return (Vector(iterate_single(self, lambda x : x * scalar)))
-    
+    def __str__(self):
+        return ("Vector("+str(self.values)+")")

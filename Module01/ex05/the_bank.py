@@ -20,23 +20,24 @@ class Account(object):
     def transfer(self, amount):
         self.value += amount
 
-def iscorrupted(account):
-    attr = account.__dict__
-    if len(attr) % 2 == 0\
-        or sum(key.startswith("b") for key in attr)\
-        or (sum(key.startswith("zip") for key in attr) == 0 and sum(key.startswith("addr") for key in attr) == 0) \
-        or (not isinstance(attr["value"], float) and not isinstance(attr["value"], int)):
-        # or "name" not in attr\
-        # or "value" not in attr\
-        # or "id" not in attr\
-        # or not isinstance(attr["id"], int)\
-            return True
-    return False
 
 class Bank(object):
     """The bank"""
     def __init__(self):
         self.accounts = []
+
+    def iscorrupted(account):
+        attr = account.__dict__
+        if len(attr) % 2 == 0\
+            or sum(key.startswith("b") for key in attr)\
+            or (sum(key.startswith("zip") for key in attr) == 0 and sum(key.startswith("addr") for key in attr) == 0) \
+            or "name" not in attr\
+            or "value" not in attr\
+            or "id" not in attr\
+            or not isinstance(attr["id"], int)\
+            or (not isinstance(attr["value"], float) and not isinstance(attr["value"], int)):
+                return True
+        return False
     
     def add(self, new_account):
         """ Add new_account in the Bank
@@ -63,7 +64,7 @@ class Bank(object):
         dest_account = next((account for account in self.accounts if account.name == dest), None)
         if origin_account == None or dest_account == None:
             return False
-        if iscorrupted(origin_account) or iscorrupted(dest_account):
+        if Bank.iscorrupted(origin_account) or Bank.iscorrupted(dest_account):
             return False
         if origin_account.value < amount or amount < 0:
             return False
@@ -82,9 +83,12 @@ class Bank(object):
         index = self.accounts.index(account)
         if account == None:
             return False
+        keys = []
         for key in account.__dict__:
             if key.startswith("b"):
-                account.__dict__.pop(key)
+                keys.append(key)
+        for key in keys:
+            account.__dict__.pop(key)
         if "name" not in account.__dict__ or not isinstance(account.__dict__["name"], str):
             account.__dict__["name"] = "default"
         if "value" not in account.__dict__ or (not isinstance(account.__dict__["value"], int) and not isinstance(account.__dict__["value"], float)):

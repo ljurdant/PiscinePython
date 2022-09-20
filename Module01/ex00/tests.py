@@ -15,7 +15,7 @@ print("last update: ", mybook.last_update)
 mybook.add_recipe(cake)
 mybook.add_recipe(cake2)
 mybook.get_recipe_by_name("strawberry cake")
-mybook.get_recipes_by_types("dessert")
+print(mybook.get_recipes_by_types("dessert")[0])
 # mybook.get_recipes_by_types("s")
 
 print("last update: ", mybook.last_update)

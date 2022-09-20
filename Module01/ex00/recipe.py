@@ -79,7 +79,3 @@ class Recipe:
         txt = ""
         txt = f"Name: {self.name}\nCooking level: {self.cooking_lvl}\nCooking time: {self.cooking_time} minutes\nIngredients: {self.ingredients}\nRecipe type: {self.recipe_type}\nDescription:{self.description}"
         return txt
-
-# cake = Recipe("cake", 1, 5, ["flour", "chocolate", "milk", "egss"], "dessert", "A nice cake to eat with your friends")
-# to_print = str(cake)
-# print(to_print)

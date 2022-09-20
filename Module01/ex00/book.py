@@ -34,9 +34,10 @@ class Book:
         if recipe_type not in self.recipes_list:
             raise AttributeError("recipe type")
         if not len(self.recipes_list[recipe_type]):
-            print("There areno recipes of type:",recipe_type)
+            print("There are no recipes of type:",recipe_type)
         else:
-            print(", ".join([recipe.name for recipe in self.recipes_list[recipe_type]]))
+            return ([recipe for recipe in self.recipes_list[recipe_type]])
+            # print(", ".join([recipe.name for recipe in self.recipes_list[recipe_type]]))
 
         
     def add_recipe(self, recipe):
