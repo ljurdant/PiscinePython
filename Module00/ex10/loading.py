@@ -31,7 +31,7 @@ def ft_progress(lst):
         else:
             ETA = 0
         message = "ETA "+str(ETA)+"s ["+(3-len(str(percent)))*" "+str(percent)+"%]["+loading*"="+">"+(loading_constant - loading)*" "+"]"+str(i + 1)+"/"+str(len(lst))+" | elapsed time "+str(elapsed_time)+"s"
-        if i > 1:
+        if i >= 1:
             moveup = "\033[A"
             print(moveup * int(len(message) / width + 1))
         if len(previous_message) > len(message):
@@ -40,3 +40,6 @@ def ft_progress(lst):
         width = os.get_terminal_size()[0]
         print(message, end="\r")
         yield lst[i]
+
+for i in ft_progress(range(0, 1000)):
+    sleep(0.1)
