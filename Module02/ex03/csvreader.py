@@ -6,21 +6,19 @@ class CsvReader():
         self.skip_top = skip_top
         self.skip_bottom = skip_bottom
         self.file = None
-        # self.
+        self.lines = None
 
     def __enter__(self):
         try:
             self.file = open(self.filename, 'r')
         except:
             print("No such file or directory: "+self.filename)
-        lines = self.file.readlines()
-        size = len(lines[self.skip_top].split(self.sep))
-        for i in range(self.skip_top, len(lines) - self.skip_bottom):
-            line = lines[i].split(self.sep)
-            if len(line) != size:
+            return None
+        self.lines = self.file.readlines()
+        size = len(self.lines[0].split(self.sep))
+        for line in self.lines:
+            if len(line.split(self.sep)) != size:
                 return None
-        self.file.close()
-        self.file = open(self.filename, 'r')
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
@@ -31,19 +29,12 @@ class CsvReader():
             Return:
                 nested list (list(list, list, ...)) representing the data.
         """
-        lines = self.file.readlines()
-        if len(lines) < self.skip_top + self.skip_bottom:
+        if len(self.lines) < self.skip_top + self.skip_bottom:
             return []
-        size = len(lines[self.skip_top].split(self.sep))
         data = []
-        for i in range(self.skip_top, len(lines) - self.skip_bottom):
-            line = lines[i].split(self.sep)
-            if len(line) != size:
-                return None
-            else:
-                data.append(line)
-        self.file.close()
-        self.file = open(self.filename)
+        for i in range(self.skip_top, len(self.lines) - self.skip_bottom):
+            line = self.lines[i].split(self.sep)
+            data.append(line)
         return data
 
     def getheader(self):
@@ -55,7 +46,5 @@ class CsvReader():
         if not self.header:
             return None
         else:
-            header = self.file.readline().split(self.sep)
-            self.file.close()
-            self.file = open(self.filename)
+            header = self.lines[0].split(self.sep)
             return header
