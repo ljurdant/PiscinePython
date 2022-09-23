@@ -1,18 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="my-minipack",
+    name="my_minipack",
     version="1.0.0",
     description="How to create a package python",
-    home_page=None,
     author="ljurdant",
     author_email="ljurdant@student.42.fr",
     license="MIT",
-    location="[PATH TO BOOTCAMP PYTHON]/module02/tmp_env/lib/python3.7/site-packages",
     requires="",
-    required_by="",
-    metadata_version="2.1",
-    installer="pip",
     classifiers=[
     # How mature is this project? Common values are
     #   3 - Alpha
