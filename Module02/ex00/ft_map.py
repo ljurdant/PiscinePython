@@ -14,7 +14,8 @@ def ft_map(function_to_apply, iterable):
     """
     iter(iterable)
     try:
-        function_to_apply(iterable[0])
+        if len(iterable):
+            function_to_apply(iterable[0])
     except:
         return None
     return ft_map_generator(function_to_apply, iterable)
@@ -22,8 +23,8 @@ def ft_map(function_to_apply, iterable):
 # x = [1, 2, 3, 4, 5]
 
 # mp = ft_map(lambda dum: dum + 1, x)
-# # mp_noniter = ft_map(lambda dum: dum + 1, 5)
+# mp_noniter = ft_map(lambda dum: dum + 1, 5)
 # mp_badfunction = ft_map(lambda dum: dum / 4, "hello")
 
-# print(mp)
+# print(list(mp))
 # print(mp_badfunction)

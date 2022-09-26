@@ -14,13 +14,14 @@ def ft_filter(function_to_apply, iterable):
     """
     iter(iterable)
     try:
-        function_to_apply(iterable[0])
+        if len(iterable):
+            function_to_apply(iterable[0])
     except:
         return None
     return (ft_filter_generator(function_to_apply, iterable))
 
 # x = [1, 2, 3, 4, 5]
-# fltr = ft_filter(lambda dum: not (dum % 2), x)
+# fltr = ft_filter(lambda dum: not (dum % 2), [])
 # # fltr_noniter = ft_filter(lambda dum: dum + 1, 5)
 # fltr_badfunction = ft_filter(lambda dum: dum / 4, "filter")
 
