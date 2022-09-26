@@ -12,7 +12,7 @@ def proper_round(n: float):
         n = round(n)
     return (n)
 
-def ft_progress(lst):
+def progress(lst):
     loading_constant = 25
     start = time()
     second = 0
@@ -39,7 +39,6 @@ def ft_progress(lst):
         previous_message = message
         width = os.get_terminal_size()[0]
         print(message, end="\r")
+        if i == len(lst) - 1:
+            print()
         yield lst[i]
-
-for i in ft_progress(range(0, 1000)):
-    sleep(0.1)
