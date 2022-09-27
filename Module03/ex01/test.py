@@ -2,7 +2,7 @@ from ImageProcessor import ImageProcessor
 
 IP = ImageProcessor()
 
-arr = IP.load("./elon_canaGAN.png")
+arr = IP.load("./42AI.png")
 IP.load("non_existent.png")
 IP.load("./ImageProcessor.py")
 print(arr)
