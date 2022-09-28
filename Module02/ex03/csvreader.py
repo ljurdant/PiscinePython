@@ -14,7 +14,7 @@ class CsvReader():
         except:
             print("No such file or directory: "+self.filename)
             return None
-        self.lines = self.file.readlines()
+        self.lines = self.file.read().splitlines()
         size = len(self.lines[0].split(self.sep))
         for line in self.lines:
             if len(line.split(self.sep)) != size:
@@ -22,7 +22,8 @@ class CsvReader():
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
-        self.file.close()
+        if self.file:
+            self.file.close()
 
     def getdata(self):
         """ Retrieves the data/records from skip_top to skip bottom.
