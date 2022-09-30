@@ -12,7 +12,7 @@ class CsvReader():
         try:
             self.file = open(self.filename, 'r')
         except:
-            print("No such file or directory: "+self.filename)
+            print("No such file or directory:",self.filename)
             return None
         self.lines = self.file.read().splitlines()
         size = len(self.lines[0].split(self.sep))

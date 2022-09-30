@@ -1,6 +1,7 @@
 from re import M
 import numpy as np
 
+
 class ColorFilter:
     def invert(self, array):
         """
