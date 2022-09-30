@@ -62,18 +62,13 @@ class KmeansClustering:
 		-------
 		This function should not raise any Exception.
 		"""
-		# clusters = []
-		# 	for i in range(self.ncentroid):
-		# 		clusters.append([])
-		# for row in X:
-		# 	distances = ((self.centroids[:,:1] - row[:1])**2 + (self.centroids[:,1:2] - row[1:2])**2 + (self.centroids[:,2:3] - row[2:3])**2)**0.5
-		# 	indices = np.where(distances == np.min(distances))
-		# 	if indices[0].shape[0] <= 1:
-		# 		index = int(indices[0])
-		# 	else:
-		# 		index = int(indices[0][1])
-		# 	clusters[index].append(list(row))
-		self.clusters = clusters
+		self.fit(X)
+		prediction3D = X
+		for i in range(self.ncentroid):
+			prediction3D = np.where(np.isin(prediction3D,self.clusters[i]), i, prediction3D)
+
+		prediction = prediction3D[:,0]
+		return (prediction)
 
 
 def	get_colors(n):
@@ -126,9 +121,9 @@ if __name__=='__main__':
 	km = KmeansClustering(max_iter,ncentroid)
 	with CsvReader(filename, skip_top=1) as file:
 		if file == None:
-			print("Error: File nonexistant or corrupted")
+			print("Error: File non-existant or corrupted")
 		else:
 			x = np.array(file.getdata())[:,1:]
 			km.fit(x)
-			km.predict(x)
+			prediction = km.predict(x)
 			plot(km)
