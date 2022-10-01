@@ -1,3 +1,4 @@
+from turtle import distance
 import numpy as np
 from csvreader import CsvReader
 import matplotlib.pyplot as plt
@@ -26,27 +27,25 @@ class KmeansClustering:
 			This function should not raise any Exception.
 		"""
 		X = np.array(X, dtype=float)
-		self.centroids = X[np.random.randint(0,X.shape[0],self.ncentroid)]
+		self.centroids = np.random.rand(self.ncentroid, 3) * (np.max(X,axis = 0) - np.min(X,axis=0)) + np.min(X,axis=0)
+		print(self.centroids)
 		for i in range(self.max_iter):		
 			clusters = []
-			for i in range(self.ncentroid):
+			for _ in range(self.ncentroid):
 				clusters.append([])
+			pre = np.copy(self.centroids)
 			for row in X:
 				distances = ((self.centroids[:,:1] - row[:1])**2 + (self.centroids[:,1:2] - row[1:2])**2 + (self.centroids[:,2:3] - row[2:3])**2)**0.5
-				indices = np.where(distances == np.min(distances))
-				if indices[0].shape[0] <= 1:
-					index = int(indices[0])
-				else:
-					index = int(indices[0][1])
+				index = list(distances).index(min(distances))
 				clusters[index].append(list(row))
 			for centroid in range(self.ncentroid):
-				m = np.mean(np.array(clusters[centroid]), axis=0)
-				try:
-					if not math.isnan(sum(m)):
-						self.centroids[centroid] = m
-				except:
-					if not math.isnan(m):						
-						self.centroids[centroid] = m
+				m = np.mean(np.array(clusters[centroid]), axis=0)					
+				self.centroids[centroid] = m
+			if (np.array_equal(self.centroids, pre)):
+				print("nb iter = ", i)
+				# print("centroids = ", self.centroids)
+				break
+
 		self.clusters = clusters
 
 	def predict(self, X):
@@ -62,12 +61,21 @@ class KmeansClustering:
 		-------
 		This function should not raise any Exception.
 		"""
-		self.fit(X)
+		clusters = []
+		
+		for _ in range(self.ncentroid):
+			clusters.append([])
+		b = True
+		for row in X.astype(np.float64):
+			distances = ((self.centroids[:,:1] - row[:1])**2 + (self.centroids[:,1:2] - row[1:2])**2 + (self.centroids[:,2:3] - row[2:3])**2)**0.5
+			index = list(distances).index(min(distances))
+			clusters[index].append(list(row))
 		prediction3D = X
 		for i in range(self.ncentroid):
 			prediction3D = np.where(np.isin(prediction3D,self.clusters[i]), i, prediction3D)
 
 		prediction = prediction3D[:,0]
+		
 		return (prediction)
 
 
@@ -115,7 +123,7 @@ if __name__=='__main__':
 		elif kwarg[0] == "ncentroid":
 			ncentroid = int(kwarg[1])
 		elif kwarg[0] == "max_iter":
-			ncentroid = int(kwarg[1])
+			max_iter = int(kwarg[1])
 		elif kwarg[0] == "filename":
 			filename = kwarg[1]
 	km = KmeansClustering(max_iter,ncentroid)
@@ -126,4 +134,27 @@ if __name__=='__main__':
 			x = np.array(file.getdata())[:,1:]
 			km.fit(x)
 			prediction = km.predict(x)
+			heights = []
+			slenderness = []
+			for c in range(ncentroid):
+				# print(km.clusters[c])
+				heights.append(np.mean(np.array(km.clusters[c]),axis=0)[0])
+				slenderness.append(np.mean(np.array(km.clusters[c]),axis=0)[1] / np.mean(np.array(km.clusters[c]),axis=0)[0])
+
+			
+			# for c in range(ncentroid):
+			# 	name = ""
+			# 	if heights[c] == max(heights):
+			# 		name = "Asteriods' Belt Colonies"
+			# 	elif heights[c] != min(heights) and slenderness[c] != max(slenderness):
+			# 		name = "Mars Republic"
+			# 	elif slenderness[c] != max(slenderness):
+			# 		name = "The flying cities of Venus"
+			# 	else:
+			# 		name = "Earth"
+			# 	print(name+":")
+			# 	print("centroid:",km.centroids[c])
+			# 	print("population:",len(km.clusters[c]))
+			# 	print()
+			# print(km.centroids)
 			plot(km)
