@@ -1,6 +1,4 @@
-from turtle import distance
 import numpy as np
-from requests import delete
 from csvreader import CsvReader
 import matplotlib.pyplot as plt
 import math
@@ -12,6 +10,7 @@ class KmeansClustering:
 		self.ncentroid = ncentroid # number of centroids
 		self.max_iter = max_iter # number of max iterations to update the centroids
 		self.centroids = [] # values of the centroids
+		self.clusters = []
 
 	def fit(self, X):
 		"""
@@ -28,25 +27,30 @@ class KmeansClustering:
 			This function should not raise any Exception.
 		"""
 		X = np.array(X, dtype=float)
-		self.centroids = np.random.rand(self.ncentroid, 3) * (np.max(X,axis = 0) - np.min(X,axis=0)) + np.min(X,axis=0)
+		scaled = np.copy(X)
+		for i in range(scaled.shape[1]):
+			scaled[:,i] = (scaled[:,i] - min(scaled[:,i]))/(max(scaled[:,i]) - min(scaled[:,i]))
+		self.centroids = np.random.rand(self.ncentroid, 3) #* (np.max(X,axis = 0) - np.min(X,axis=0)) + np.min(X,axis=0)
+		# print(centroids)
 		for i in range(self.max_iter):		
 			clusters = []
 			for _ in range(self.ncentroid):
 				clusters.append([])
 			pre = np.copy(self.centroids)
-			for row in X:
+			for row in scaled:
 				distances = ((self.centroids[:,:1] - row[:1])**2 + (self.centroids[:,1:2] - row[1:2])**2 + (self.centroids[:,2:3] - row[2:3])**2)**0.5
 				index = list(distances).index(min(distances))
 				clusters[index].append(list(row))
 			for centroid in range(self.ncentroid):
 				m = np.mean(np.array(clusters[centroid]), axis=0)					
 				self.centroids[centroid] = m
-			if (np.array_equal(self.centroids, pre)):
-				print("nb iter = ", i)
-				# print("centroids = ", self.centroids)
+			if np.array_equal(pre, self.centroids):
+				print("iterations = ", i)
 				break
 
-		self.clusters = clusters
+		for i in range(scaled.shape[1]):
+			self.centroids[:,i] = min(X[:,i]) + self.centroids[:,i]*(max(X[:,i] - min(X[:,i])))
+		
 
 	def predict(self, X):
 		"""
@@ -61,21 +65,21 @@ class KmeansClustering:
 		-------
 		This function should not raise any Exception.
 		"""
-		clusters = []
-		
-		for _ in range(self.ncentroid):
-			clusters.append([])
-		b = True
-		for row in X.astype(np.float64):
+		prediction = np.zeros((X.shape[0]))
+		scaled = np.copy(X.astype(np.float64))
+		for i in range(scaled.shape[1]):
+			scaled[:,i] = (scaled[:,i] - min(scaled[:,i]))/(max(scaled[:,i]) - min(scaled[:,i]))
+		for ind, row in enumerate(X.astype(np.float64)):
 			distances = ((self.centroids[:,:1] - row[:1])**2 + (self.centroids[:,1:2] - row[1:2])**2 + (self.centroids[:,2:3] - row[2:3])**2)**0.5
 			index = list(distances).index(min(distances))
-			clusters[index].append(list(row))
-		prediction3D = X
-		for i in range(self.ncentroid):
-			prediction3D = np.where(np.isin(prediction3D,self.clusters[i]), i, prediction3D)
-
-		prediction = prediction3D[:,0]
-		
+			prediction[ind] = index
+		clusters = []
+		for _ in range(self.ncentroid):
+			clusters.append([])
+		for index, cluster_index in enumerate(prediction):
+			clusters[int(cluster_index)].append(list(X[index]))
+		self.clusters = clusters
+		# print(clusters)
 		return (prediction)
 
 
@@ -139,8 +143,8 @@ if __name__=='__main__':
 			heights = []
 			slenderness = []
 			for c in range(ncentroid):
-				heights.append(np.mean(np.array(km.clusters[c]),axis=0)[0])
-				slenderness.append(np.mean(np.array(km.clusters[c]),axis=0)[1] / np.mean(np.array(km.clusters[c]),axis=0)[0])
+				heights.append(np.mean(np.array(km.clusters[c],dtype=float),axis=0)[0])
+				slenderness.append(np.mean(np.array(km.clusters[c],dtype=float),axis=0)[1] / np.mean(np.array(km.clusters[c],dtype=float),axis=0)[0])
 
 			if ncentroid == 4:
 				clusters = {
