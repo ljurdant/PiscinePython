@@ -1,5 +1,6 @@
 from turtle import distance
 import numpy as np
+from requests import delete
 from csvreader import CsvReader
 import matplotlib.pyplot as plt
 import math
@@ -28,7 +29,6 @@ class KmeansClustering:
 		"""
 		X = np.array(X, dtype=float)
 		self.centroids = np.random.rand(self.ncentroid, 3) * (np.max(X,axis = 0) - np.min(X,axis=0)) + np.min(X,axis=0)
-		print(self.centroids)
 		for i in range(self.max_iter):		
 			clusters = []
 			for _ in range(self.ncentroid):
@@ -105,6 +105,7 @@ def plot(km):
 		ys = [float(i) for i in np.array(cluster)[:,1]]
 		zs = [float(i) for i in np.array(cluster)[:,2]]
 		ax.scatter(xs, ys, zs, color = colors[index])
+	
 	plt.show()
 
 
@@ -127,34 +128,49 @@ if __name__=='__main__':
 		elif kwarg[0] == "filename":
 			filename = kwarg[1]
 	km = KmeansClustering(max_iter,ncentroid)
-	with CsvReader(filename, skip_top=1) as file:
+	with CsvReader(filename, skip_top=1, header=True) as file:
 		if file == None:
 			print("Error: File non-existant or corrupted")
 		else:
 			x = np.array(file.getdata())[:,1:]
+			headers = file.getheader()
 			km.fit(x)
 			prediction = km.predict(x)
 			heights = []
 			slenderness = []
 			for c in range(ncentroid):
-				# print(km.clusters[c])
 				heights.append(np.mean(np.array(km.clusters[c]),axis=0)[0])
 				slenderness.append(np.mean(np.array(km.clusters[c]),axis=0)[1] / np.mean(np.array(km.clusters[c]),axis=0)[0])
 
-			
-			# for c in range(ncentroid):
-			# 	name = ""
-			# 	if heights[c] == max(heights):
-			# 		name = "Asteriods' Belt Colonies"
-			# 	elif heights[c] != min(heights) and slenderness[c] != max(slenderness):
-			# 		name = "Mars Republic"
-			# 	elif slenderness[c] != max(slenderness):
-			# 		name = "The flying cities of Venus"
-			# 	else:
-			# 		name = "Earth"
-			# 	print(name+":")
-			# 	print("centroid:",km.centroids[c])
-			# 	print("population:",len(km.clusters[c]))
-			# 	print()
-			# print(km.centroids)
-			plot(km)
+			if ncentroid == 4:
+				clusters = {
+					"Asteriods' Belt Colonies":"",
+					"Mars Republic":"",
+					"The flying cities of Venus":"",
+					"Earth":""
+				}
+				clusters["Asteriods' Belt Colonies"] = heights.index(max(heights))
+				clusters["Mars Republic"] = heights.index(sorted(heights)[2])
+				if slenderness[heights.index(sorted(heights)[0])] > slenderness[heights.index(sorted(heights)[0])]:
+					clusters["The flying cities of Venus"] = heights.index(sorted(heights)[0])
+					clusters["Earth"] = heights.index(sorted(heights)[1])
+				else:
+					clusters["The flying cities of Venus"] = heights.index(sorted(heights)[1])
+					clusters["Earth"] = heights.index(sorted(heights)[0])
+				for key in clusters.keys():
+					print(key,"\ncentroid:",km.centroids[clusters[key]],"\npopulation:",len(km.clusters[clusters[key]]))
+				fig, axs = plt.subplots(3)
+				colors = get_colors(km.ncentroid)
+				
+				legends = [key for key in dict(sorted(clusters.items(), key=lambda item: item[1])).keys()]
+				for i in range(3):
+					for index, cluster in enumerate(km.clusters):
+						other = (i+1)%3
+						xs = [float(i) for i in np.array(cluster)[:,i]]
+						ys = [float(i) for i in np.array(cluster)[:,other]]
+						axs[i].scatter(xs, ys, color = colors[index])
+						axs[i].set(xlabel=headers[i+1], ylabel=headers[other+1])
+						axs[i].legend(legends)
+
+				plt.show()
+				# plot(km)
