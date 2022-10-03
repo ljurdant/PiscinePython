@@ -7,8 +7,8 @@ class ImageProcessor:
             img =  imageio.imread(path)
         except FileNotFoundError as fnf:
             print(fnf)
-        except ValueError:
-            print("Error: '"+path+"' is not and image")
+        except :
+            print("Error: '",path,"' is not and image",sep='')
         else:
             return(img[:,:,:3] / 255)
     def display(self, array):

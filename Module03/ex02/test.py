@@ -10,3 +10,5 @@ print(spb.thin(arr2, 3, 0))
 arr3 = np.array([[1, 2, 3],[1, 2, 3],[1, 2, 3]])
 
 print(spb.juxtapose(arr3, 3, 1))
+
+print(spb.mosaic(arr3,(3,3)))

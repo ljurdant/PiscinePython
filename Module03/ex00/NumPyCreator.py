@@ -21,7 +21,7 @@ class NumPyCreator:
     def from_iterable(self, itr, dtype=None):
         try:
             iter(itr)
-            return(np.array(itr, dtype=dtype))
+            return(np.array(list(itr), dtype=dtype))
         except:
             return None
     
