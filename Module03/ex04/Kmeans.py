@@ -176,5 +176,5 @@ if __name__=='__main__':
 						axs[i].set(xlabel=headers[i+1], ylabel=headers[other+1])
 						axs[i].legend(legends)
 
-				plt.show()
+				# plt.show()
 				# plot(km)
