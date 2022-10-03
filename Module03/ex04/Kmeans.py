@@ -125,7 +125,7 @@ if __name__=='__main__':
 	filename = None
 	for arg in sys.argv[1:]:
 		kwarg = arg.split("=")
-		if kwarg[0] not in ["ncentroid", "max_iter","filename"]:
+		if kwarg[0] not in ["ncentroid", "max_iter","filepath"]:
 			print("Error: bad argument name.\nValid arguments are:\n\t-ncentroid: number of centroids desired\n\t-max_iter: maximum amount of iterations allowed in order to find the kmeans cluster")
 			exit()
 		elif len(kwarg) != 2:
@@ -135,7 +135,7 @@ if __name__=='__main__':
 			ncentroid = int(kwarg[1])
 		elif kwarg[0] == "max_iter":
 			max_iter = int(kwarg[1])
-		elif kwarg[0] == "filename":
+		elif kwarg[0] == "filepath":
 			filename = kwarg[1]
 	km = KmeansClustering(max_iter,ncentroid)
 	with CsvReader(filename, skip_top=1, header=True) as file:

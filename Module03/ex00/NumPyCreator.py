@@ -40,3 +40,7 @@ class NumPyCreator:
             return arr
         except:
             return None
+    
+    def identity(self, n):
+        if isinstance(n, int) and n >=0 :
+            return np.identity(n)

@@ -4,7 +4,7 @@ from ColorFilter import ColorFilter
 
 IP = ImageProcessor()
 CF = ColorFilter()
-arr = IP.load("./elon_canaGAN.png")
+arr = IP.load("../resources/elon_canaGAN.png")
 
 
 inv = CF.invert(arr)
@@ -19,5 +19,5 @@ cell = CF.to_celluloid(arr)
 IP.display(cell)
 grym = CF.to_grayscale(arr, "mean")
 IP.display(grym)
-gryw = CF.to_grayscale(None, "weight", weights = [0.2, 0.3, 0.5])
+gryw = CF.to_grayscale(arr, "weight", weights = [0.2, 0.3, 0.5])
 IP.display(gryw)
