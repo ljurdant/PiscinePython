@@ -1,3 +1,4 @@
+from dataclasses import replace
 import numpy as np
 from csvreader import CsvReader
 import matplotlib.pyplot as plt
@@ -11,6 +12,7 @@ class KmeansClustering:
 		self.max_iter = max_iter # number of max iterations to update the centroids
 		self.centroids = [] # values of the centroids
 		self.clusters = []
+		self.scaled_centroids = []
 
 	def fit(self, X):
 		"""
@@ -30,8 +32,9 @@ class KmeansClustering:
 		scaled = np.copy(X)
 		for i in range(scaled.shape[1]):
 			scaled[:,i] = (scaled[:,i] - min(scaled[:,i]))/(max(scaled[:,i]) - min(scaled[:,i]))
-		self.centroids = np.random.rand(self.ncentroid, 3) #* (np.max(X,axis = 0) - np.min(X,axis=0)) + np.min(X,axis=0)
-		# print(centroids)
+		# self.centroids = np.random.rand(self.ncentroid, 3) #* (np.max(X,axis = 0) - np.min(X,axis=0)) + np.min(X,axis=0)
+		self.centroids = scaled[np.random.choice(range(X.shape[0]),self.ncentroid, replace=False)]
+		print(self.centroids)
 		for i in range(self.max_iter):		
 			clusters = []
 			for _ in range(self.ncentroid):
@@ -47,7 +50,7 @@ class KmeansClustering:
 			if np.array_equal(pre, self.centroids):
 				print("iterations = ", i)
 				break
-
+		self.scaled_centroids = np.copy(self.centroids)
 		for i in range(scaled.shape[1]):
 			self.centroids[:,i] = min(X[:,i]) + self.centroids[:,i]*(max(X[:,i] - min(X[:,i])))
 		
@@ -67,10 +70,14 @@ class KmeansClustering:
 		"""
 		prediction = np.zeros((X.shape[0]))
 		scaled = np.copy(X.astype(np.float64))
+		scaled_centroids = np.copy(self.centroids)
+		X = X.astype(float)
+		for i in range(scaled.shape[1]):
+			scaled_centroids[:,i] = (scaled_centroids[:,i] - min(X[:,i]))/(max(X[:,i]) - min(X[:,i]))
 		for i in range(scaled.shape[1]):
 			scaled[:,i] = (scaled[:,i] - min(scaled[:,i]))/(max(scaled[:,i]) - min(scaled[:,i]))
-		for ind, row in enumerate(X.astype(np.float64)):
-			distances = ((self.centroids[:,:1] - row[:1])**2 + (self.centroids[:,1:2] - row[1:2])**2 + (self.centroids[:,2:3] - row[2:3])**2)**0.5
+		for ind, row in enumerate(scaled):
+			distances = ((scaled_centroids[:,:1] - row[:1])**2 + (scaled_centroids[:,1:2] - row[1:2])**2 + (scaled_centroids[:,2:3] - row[2:3])**2)**0.5
 			index = list(distances).index(min(distances))
 			prediction[ind] = index
 		clusters = []
@@ -79,7 +86,6 @@ class KmeansClustering:
 		for index, cluster_index in enumerate(prediction):
 			clusters[int(cluster_index)].append(list(X[index]))
 		self.clusters = clusters
-		# print(clusters)
 		return (prediction)
 
 
@@ -176,5 +182,5 @@ if __name__=='__main__':
 						axs[i].set(xlabel=headers[i+1], ylabel=headers[other+1])
 						axs[i].legend(legends)
 
-				# plt.show()
+				plt.show()
 				# plot(km)
