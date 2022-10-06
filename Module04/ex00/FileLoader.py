@@ -11,6 +11,7 @@ class FileLoader:
             except FileNotFoundError as fnf:
                     print(fnf)
             else:
+                print(data.shape)
                 return data
     def display(self, df, n):
         if not isinstance(n, int):
